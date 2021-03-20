@@ -64,7 +64,7 @@ public class ShoppingServiceImpl implements ShoppingService {
 			resp.setStatus(Status.ERROR.name());
 			return resp;
 		}
-		if(prod == null) {
+		if(prod == null || prod.getProdId() <=0) {
 			LOGGER.error("Product Id not exists :: {} ", productId);
 			resp.getMessages().add(ShoppingUtility.buildMessage(ShoppingConstants.PRODUCT_ID_VALIDATION_EXCEPTION.getCode(), ShoppingConstants.PRODUCT_ID_VALIDATION_EXCEPTION.getDescription()));
 			resp.setStatus(Status.ERROR.name());
