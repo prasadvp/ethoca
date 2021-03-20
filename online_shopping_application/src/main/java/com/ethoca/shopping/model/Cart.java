@@ -12,13 +12,13 @@ public class Cart {
 	
 	@Id
 	@GeneratedValue
-	private long cartId;
+	private int cartId;
 	
 	@Column(name="userId")
-	private long userId;
+	private int userId;
 	
 	@Column(name="prodId")
-	private long productId;
+	private int productId;
 	
 	@Column(name="quantity")
 	private int quantity;
@@ -26,27 +26,27 @@ public class Cart {
 	@Column(name="active")
 	private boolean active;
 
-	public long getCartId() {
+	public int getCartId() {
 		return cartId;
 	}
 
-	public void setCartId(long cartId) {
+	public void setCartId(int cartId) {
 		this.cartId = cartId;
 	}
 
-	public long getUserId() {
+	public int getUserId() {
 		return userId;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 
-	public long getProductId() {
+	public int getProductId() {
 		return productId;
 	}
 
-	public void setProductId(long productId) {
+	public void setProductId(int productId) {
 		this.productId = productId;
 	}
 

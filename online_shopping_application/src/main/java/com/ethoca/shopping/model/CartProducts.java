@@ -2,11 +2,26 @@ package com.ethoca.shopping.model;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 public class CartProducts extends Response {
 
 	//select p.prodId, p.prodName, p.prodDescription, p.price, c.quantity
 	
-	private long prodId;
+	public CartProducts(int prodId, String prodName, String prodDescription, BigDecimal price, int quantity, int userId) {
+		super();
+		this.prodId = prodId;
+		this.prodName = prodName;
+		this.prodDescription = prodDescription;
+		this.price = price;
+		this.quantity = quantity;
+		this.userId = userId;
+	}
+
+	@Id
+	private int prodId;
 	
 	private String prodName;
 	
@@ -16,11 +31,13 @@ public class CartProducts extends Response {
 	
 	private int quantity;
 
-	public long getProdId() {
+	private int userId;
+	
+	public int getProdId() {
 		return prodId;
 	}
 
-	public void setProdId(long prodId) {
+	public void setProdId(int prodId) {
 		this.prodId = prodId;
 	}
 
@@ -55,5 +72,15 @@ public class CartProducts extends Response {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+
 	
 }

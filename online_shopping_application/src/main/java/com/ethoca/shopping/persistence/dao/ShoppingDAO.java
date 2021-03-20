@@ -11,11 +11,13 @@ public interface ShoppingDAO {
 
 	List<Product> getProducts();
 	
-	Product findProductById(long productId);
+	Product findProductById(int productId);
 
 	void addProduct(ProductRequest request);
 
 	void updateCart(ProductRequest request);
 
-	List<CartProducts> viewCart(long userId);
+	List<CartProducts> viewCart(int userId);
+
+	void submitOrder(ProductRequest request);
 }

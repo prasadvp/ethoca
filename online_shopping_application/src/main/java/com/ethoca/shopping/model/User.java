@@ -2,17 +2,17 @@ package com.ethoca.shopping.model;
 
 public class User {
 	
-	private long userId;
+	private int userId;
 	
 	private String name;
 	
 	private String emailId;
 
-	public long getUserId() {
+	public int getUserId() {
 		return userId;
 	}
 
-	public void setUserId(long userId) {
+	public void setUserId(int userId) {
 		this.userId = userId;
 	}
 

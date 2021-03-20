@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.ethoca.shopping.constants.ShoppingConstants;
 import com.ethoca.shopping.exception.RetailServiceException;
@@ -16,6 +17,7 @@ import com.ethoca.shopping.model.CartProducts;
 import com.ethoca.shopping.model.Product;
 import com.ethoca.shopping.model.ProductRequest;
 import com.ethoca.shopping.persistence.dao.ShoppingDAO;
+import com.ethoca.shopping.persistence.repository.CartProductsRepository;
 import com.ethoca.shopping.persistence.repository.CartRepository;
 import com.ethoca.shopping.persistence.repository.ProductRepository;
 
@@ -30,24 +32,27 @@ public class ShoppingDAOImpl implements ShoppingDAO {
 	@Autowired
 	@Qualifier("CartRepository")
 	private CartRepository cartRepo;
+	
+	@Autowired
+	@Qualifier("CartProductsRepository")
+	private CartProductsRepository cartProdRepo;
 
 	@Override
-	//TODO:@Cacheable(value = "products", key = "#productId")
 	public List<Product> getProducts() {
 		return prodRepo.findAll();
 	}
 
 	@Override
 	@Cacheable(value = "products", key = "#productId")
-	public Product findProductById(long productId) {
+	public Product findProductById(int productId) {
 		return prodRepo.findByProdId(productId);
 	}
 
 	@Override
 	public void addProduct(ProductRequest request) {
 		//Check if the product is already present in the user cart. if yes, update the product quantity
-		long prodId = request.getProduct().getProdId();
-		long userId = request.getUser().getUserId();
+		int prodId = request.getProduct().getProdId();
+		int userId = request.getUser().getUserId();
 		Cart obj = cartRepo.findProductByUserId(userId, prodId);
 		if(obj==null) {
 			obj = new Cart();
@@ -68,8 +73,8 @@ public class ShoppingDAOImpl implements ShoppingDAO {
 	public void updateCart(ProductRequest request) {
 		//Check if the product is already present in the user cart. if yes, update the product quantity
 		//If not, return an error 
-		long prodId = request.getProduct().getProdId();
-		long userId = request.getUser().getUserId();
+		int prodId = request.getProduct().getProdId();
+		int userId = request.getUser().getUserId();
 		Cart obj = cartRepo.findProductByUserId(userId, prodId);
 		if(obj!=null) {
 			obj.setQuantity(request.getRequiredQuantity());
@@ -86,10 +91,18 @@ public class ShoppingDAOImpl implements ShoppingDAO {
 
 	
 	@Override
-	public List<CartProducts> viewCart(long userId) {
-		return prodRepo.findProductsByUser(userId);
+	public List<CartProducts> viewCart(int userId) {
+		return cartProdRepo.findProductsByUserId(userId);
 	
 	}
-	
+
+	@Transactional
+	@Override
+	public void submitOrder(ProductRequest request) {
+		int userId = request.getUser().getUserId();
+		cartRepo.updateCart(userId);
+		
+		
+	}
 
 }

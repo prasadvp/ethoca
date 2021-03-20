@@ -11,7 +11,7 @@ import javax.persistence.Table;
 public class Product {
 	@Id
 	@Column(name="prodId")
-	private long prodId;
+	private int prodId;
 	
 	@Column(name="name")
 	private String prodName;
@@ -25,11 +25,11 @@ public class Product {
 	@Column(name="availableQty")
 	private int availbleQuantity;
 
-	public long getProdId() {
+	public int getProdId() {
 		return prodId;
 	}
 
-	public void setProdId(long prodId) {
+	public void setProdId(int prodId) {
 		this.prodId = prodId;
 	}
 

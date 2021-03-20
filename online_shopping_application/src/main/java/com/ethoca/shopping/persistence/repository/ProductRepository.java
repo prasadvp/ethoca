@@ -1,6 +1,12 @@
 package com.ethoca.shopping.persistence.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
+
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+import javax.persistence.NamedNativeQuery;
+import javax.persistence.SqlResultSetMapping;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,13 +16,15 @@ import org.springframework.stereotype.Repository;
 import com.ethoca.shopping.model.CartProducts;
 import com.ethoca.shopping.model.Product;
 
+
 @Repository("ProductRepository")
-public interface ProductRepository extends JpaRepository<Product, Long>{
+public interface ProductRepository extends JpaRepository<Product, Integer>{
 	
 	List<Product> findAll();
 	
-	Product findByProdId(long prodId);
+	Product findByProdId(int prodId);
 	
-	@Query(value = "select p.prodId, p.prodName, p.prodDescription, p.price, c.quantity from cart c join product p  on c.prodId = p.prodId where c.userId = :userId)", nativeQuery = true)
-	List<CartProducts> findProductsByUser(@Param("userId") long userId);
+	
+
+	
 }

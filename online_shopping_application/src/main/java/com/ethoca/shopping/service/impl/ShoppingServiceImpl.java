@@ -1,13 +1,13 @@
 package com.ethoca.shopping.service.impl;
 
 import java.util.List;
+import java.util.Random;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import com.ethoca.shopping.constants.ShoppingConstants;
 import com.ethoca.shopping.helper.ShoppingUtility;
@@ -25,14 +25,14 @@ public class ShoppingServiceImpl implements ShoppingService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ShoppingServiceImpl.class);
 
-	private RestTemplate restTemplate;
+
 	
 	@Autowired
 	@Qualifier("shoppingDAO")
 	private ShoppingDAO shoppingDAO;
 	
 	@Override
-	public Product getProduct(long productId) {
+	public Product getProduct(int productId) {
 		
 		Product prod = shoppingDAO.findProductById(productId);
 		return (prod !=null) ? prod : new Product();
@@ -55,7 +55,7 @@ public class ShoppingServiceImpl implements ShoppingService {
 
 		
 		Response resp = new Response();
-		long productId = request.getProduct().getProdId();
+		int productId = request.getProduct().getProdId();
 		LOGGER.debug("Product id to be added :: {} ", productId);
 		Product prod  = getProduct(productId);
 		if(request.getRequiredQuantity() <=0) {
@@ -98,7 +98,7 @@ public class ShoppingServiceImpl implements ShoppingService {
 	@Override
 	public Response updateCart(ProductRequest request) {
 		Response resp = new Response();
-		long productId = request.getProduct().getProdId();
+		int productId = request.getProduct().getProdId();
 		LOGGER.debug("Product id to be updated  :: {} ", productId);
 		Product prod  = getProduct(productId);
 		if(prod == null) {
@@ -124,13 +124,14 @@ public class ShoppingServiceImpl implements ShoppingService {
 	}
 
 	@Override
-	public void submitOrder() {
-		// TODO Auto-generated method stub
+	public int submitOrder(ProductRequest request) {
+		shoppingDAO.submitOrder(request);
+		return new Random().nextInt(9999999);
 
 	}
 
 	@Override
-	public CartResponse viewCart(long userId) {
+	public CartResponse viewCart(int userId) {
 		CartResponse resp = new CartResponse();
 		
 		try {

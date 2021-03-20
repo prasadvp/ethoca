@@ -1,6 +1,7 @@
 package com.ethoca.shopping.controller;
 
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ public class ShoppingController {
 	public ShoppingService shoppingSvc;
 	
 	@GetMapping("/v1/products/{productId}")
-	public ProductResponse getProduct(@PathVariable Long productId, HttpServletResponse httpResponse) {
+	public ProductResponse getProduct(@PathVariable int productId, HttpServletResponse httpResponse) {
 		
 		LOGGER.info("ProductController:: SearchProductResponse :: Product ID from the request  {}" , productId);
 		ProductResponse resp = new ProductResponse();
@@ -59,16 +60,22 @@ public class ShoppingController {
 	
 	@GetMapping("/v1/products")
 	public ProductResponse getProducts(HttpServletResponse httpResponse){
-		List<Product> prodList = shoppingSvc.getProducts();
 		ProductResponse resp = new ProductResponse();
-		if(CollectionUtils.isEmpty(prodList)) {
+		try {
+			List<Product> prodList = shoppingSvc.getProducts();
+			if(CollectionUtils.isEmpty(prodList)) {
+				LOGGER.error("Product List could not be fetched ");
+				resp.setStatus(Status.ERROR.toString());
+				resp.getMessages().add(ShoppingUtility.buildMessage(ShoppingConstants.PRODUCTS_NOT_FOUND_EXCEPTION.getCode(), ShoppingConstants.PRODUCTS_NOT_FOUND_EXCEPTION.getDescription()));
+			}else {
+				LOGGER.debug("Product List Size :: {} ",prodList.size());
+				resp.setStatus(Status.SUCCESS.toString());
+				resp.getProducts().addAll(prodList);
+			}
+		}catch(Exception ex) {
+			LOGGER.error("Exception in getProducts :: {} ", ex.getMessage());
 			LOGGER.error("Product List could not be fetched ");
 			resp.setStatus(Status.ERROR.toString());
-			resp.getMessages().add(ShoppingUtility.buildMessage(ShoppingConstants.PRODUCTS_NOT_FOUND_EXCEPTION.getCode(), ShoppingConstants.PRODUCTS_NOT_FOUND_EXCEPTION.getDescription()));
-		}else {
-			LOGGER.debug("Product List Size :: {} ",prodList.size());
-			resp.setStatus(Status.SUCCESS.toString());
-			resp.getProducts().addAll(prodList);
 		}
 		
 		return resp;
@@ -85,7 +92,7 @@ public class ShoppingController {
 		 */
 		Response resp = new Response();
 		if(request!=null && isMandatoryDataPresent(request)) {
-				shoppingSvc.addProduct(request);
+			resp = shoppingSvc.addProduct(request);
 		}else {
 			resp.getMessages().add(ShoppingUtility.buildMessage(ShoppingConstants.INVALID_INPUT_EXCEPTION.getCode(), ShoppingConstants.INVALID_INPUT_EXCEPTION.getDescription()));
 			resp.setStatus(Status.ERROR.toString());
@@ -100,8 +107,8 @@ public class ShoppingController {
 		return request.getProduct()!=null && request.getProduct().getProdId() > 0 && request.getUser()!=null && request.getUser().getUserId()>0;
 	}
 
-	@GetMapping("/v1/{userid}/cart")
-	public CartResponse viewCart(@PathVariable Long userId, HttpServletResponse httpResponse) {
+	@GetMapping("/v1/{userId}/cart")
+	public CartResponse viewCart(@PathVariable int userId, HttpServletResponse httpResponse) {
 		return shoppingSvc.viewCart(userId);
 		
 	}
@@ -110,7 +117,7 @@ public class ShoppingController {
 	public Response updateCart(@RequestBody ProductRequest request, HttpServletResponse httpResponse) {
 		Response resp = new Response();
 		if(request!=null && isMandatoryDataPresent(request)) {
-			shoppingSvc.updateCart(request);
+			resp = shoppingSvc.updateCart(request);
 	}else {
 		resp.getMessages().add(ShoppingUtility.buildMessage(ShoppingConstants.INVALID_INPUT_EXCEPTION.getCode(), ShoppingConstants.INVALID_INPUT_EXCEPTION.getDescription()));
 		resp.setStatus(Status.ERROR.toString());
@@ -122,9 +129,10 @@ public class ShoppingController {
 	}
 
 	@PostMapping(value = "/v1/order")
-	public Order submitOrder(HttpServletResponse httpResponse) {
+	public Order submitOrder(@RequestBody ProductRequest request,HttpServletResponse httpResponse) {
 		Order order = new Order();
-		
+		order.setOrderId(shoppingSvc.submitOrder(request));
+		order.setOrderDate(new Date().getTime());
 		return order;
 	}
 }

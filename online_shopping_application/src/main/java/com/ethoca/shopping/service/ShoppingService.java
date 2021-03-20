@@ -2,16 +2,15 @@ package com.ethoca.shopping.service;
 
 import java.util.List;
 
-import com.ethoca.shopping.model.CartProducts;
+
 import com.ethoca.shopping.model.CartResponse;
 import com.ethoca.shopping.model.Product;
 import com.ethoca.shopping.model.ProductRequest;
-import com.ethoca.shopping.model.ProductResponse;
 import com.ethoca.shopping.model.Response;
 
 public interface ShoppingService {
 	
-	Product getProduct(long productId);
+	Product getProduct(int productId);
 	
 	
 	List<Product> getProducts();
@@ -20,7 +19,7 @@ public interface ShoppingService {
 	
 	Response updateCart(ProductRequest request);
 	
-	void submitOrder();
+	int submitOrder(ProductRequest request);
 	
-	CartResponse viewCart(long userId);
+	CartResponse viewCart(int userId);
 }
